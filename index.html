@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Red Light Therapy — Wavelength Reference Guide</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f1117;
+    color: #e8eaf0;
+    padding: 32px 24px;
+    min-height: 100vh;
+  }
+  h1 {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    color: #f0f0f0;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+  }
+  .subtitle {
+    text-align: center;
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 28px;
+  }
+
+  /* Spectrum bar */
+  .spectrum-wrap { margin-bottom: 8px; }
+  .spectrum-bar {
+    height: 32px;
+    border-radius: 16px;
+    background: linear-gradient(to right,
+      #cc2200 0%,
+      #ee2222 18%,
+      #dd1177 30%,
+      #550077 45%,
+      #220055 58%,
+      #110033 72%,
+      #0a001e 88%,
+      #05000f 100%
+    );
+    position: relative;
+  }
+  .spectrum-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: #666;
+    margin-top: 5px;
+    margin-bottom: 32px;
+    padding: 0 6px;
+  }
+  .spectrum-labels span { text-align: center; }
+
+  /* Category headers */
+  .category { margin-bottom: 24px; }
+  .category-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #2a2a3a;
+  }
+
+  /* Wavelength cards */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+    margin-bottom: 8px;
+  }
+  .card {
+    border-radius: 14px;
+    padding: 18px;
+    border: 1px solid rgba(255,255,255,0.07);
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    border-radius: 14px 14px 0 0;
+  }
+
+  /* colour theming per wavelength */
+  .nm630::before { background: #cc4422; }
+  .nm660::before { background: #ff2222; }
+  .nm670::before { background: #ee1188; }
+  .nm810::before { background: #7744dd; }
+  .nm830::before { background: #5533bb; }
+  .nm850::before { background: #4422aa; }
+  .nm940::before { background: #221166; }
+
+  .nm630 { background: rgba(204,68,34,0.09); }
+  .nm660 { background: rgba(255,34,34,0.11); }
+  .nm670 { background: rgba(238,17,136,0.09); }
+  .nm810 { background: rgba(119,68,221,0.11); }
+  .nm830 { background: rgba(85,51,187,0.11); }
+  .nm850 { background: rgba(68,34,170,0.11); }
+  .nm940 { background: rgba(34,17,102,0.11); }
+
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .nm-block { display: flex; align-items: baseline; gap: 3px; }
+  .nm-badge { font-size: 26px; font-weight: 800; line-height: 1; }
+  .nm-unit { font-size: 12px; color: #777; }
+
+  .nm630 .nm-badge { color: #ff7755; }
+  .nm660 .nm-badge { color: #ff4444; }
+  .nm670 .nm-badge { color: #ff55bb; }
+  .nm810 .nm-badge { color: #aa88ff; }
+  .nm830 .nm-badge { color: #8866ee; }
+  .nm850 .nm-badge { color: #7755dd; }
+  .nm940 .nm-badge { color: #5544bb; }
+
+  .card-titles { display: flex; flex-direction: column; gap: 3px; padding-top: 4px; }
+  .card-label { font-size: 13px; font-weight: 700; color: #ddd; }
+  .card-sublabel { font-size: 11px; color: #666; }
+
+  .depth-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .depth-label { font-size: 10px; color: #666; white-space: nowrap; width: 64px; }
+  .depth-bar-bg {
+    flex: 1;
+    height: 7px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .depth-bar-fill { height: 100%; border-radius: 4px; }
+
+  .nm630 .depth-bar-fill { background: #ff7755; width: 7%; }
+  .nm660 .depth-bar-fill { background: #ff4444; width: 14%; }
+  .nm670 .depth-bar-fill { background: #ff55bb; width: 17%; }
+  .nm810 .depth-bar-fill { background: #aa88ff; width: 62%; }
+  .nm830 .depth-bar-fill { background: #8866ee; width: 73%; }
+  .nm850 .depth-bar-fill { background: #7755dd; width: 84%; }
+  .nm940 .depth-bar-fill { background: #5544bb; width: 96%; }
+
+  .depth-value { font-size: 11px; color: #aaa; white-space: nowrap; width: 64px; text-align: right; }
+
+  .uses-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+  .uses-list li {
+    font-size: 11.5px;
+    color: #bbb;
+    padding-left: 16px;
+    position: relative;
+    line-height: 1.4;
+  }
+  .uses-list li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    font-size: 9px;
+    top: 2px;
+  }
+  .nm630 .uses-list li::before { color: #ff7755; }
+  .nm660 .uses-list li::before { color: #ff4444; }
+  .nm670 .uses-list li::before { color: #ff55bb; }
+  .nm810 .uses-list li::before { color: #aa88ff; }
+  .nm830 .uses-list li::before { color: #8866ee; }
+  .nm850 .uses-list li::before { color: #7755dd; }
+  .nm940 .uses-list li::before { color: #5544bb; }
+
+  .evidence-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+  .evidence-label { font-size: 10px; color: #666; flex: 1; }
+  .dots { display: flex; gap: 4px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.1); }
+  .dot.filled { background: #f0c040; }
+
+  .star-badge {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 2px 7px;
+    border-radius: 10px;
+    background: rgba(240,192,64,0.15);
+    color: #f0c040;
+    border: 1px solid rgba(240,192,64,0.3);
+    white-space: nowrap;
+    margin-left: 6px;
+  }
+
+  /* Dead zone */
+  .dead-zone {
+    background: rgba(255,200,50,0.06);
+    border: 1px solid rgba(255,200,50,0.2);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .dead-zone-icon { font-size: 22px; }
+  .dead-zone-text { font-size: 12px; color: #b0a060; line-height: 1.6; }
+  .dead-zone-text strong { color: #f0c040; }
+
+  /* Bottom table */
+  .table-wrap { margin-bottom: 20px; }
+  .table-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #2a2a3a;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  th {
+    text-align: left;
+    color: #666;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 8px 12px;
+    border-bottom: 1px solid #2a2a3a;
+  }
+  td {
+    padding: 9px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: #ccc;
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  .wl-chip {
+    display: inline-block;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+
+  /* Bottom note */
+  .bottom-note {
+    background: rgba(100,180,100,0.06);
+    border: 1px solid rgba(100,180,100,0.2);
+    border-radius: 12px;
+    padding: 16px 18px;
+    font-size: 12px;
+    color: #90b890;
+    line-height: 1.7;
+  }
+  .bottom-note strong { color: #a0d8a0; }
+</style>
+</head>
+<body>
+
+<h1>Red Light Therapy — Wavelength Reference Guide</h1>
+<p class="subtitle">Photobiomodulation (PBM) therapeutic window: 600–1000nm &nbsp;|&nbsp; Wavelength determines penetration depth determines what gets treated</p>
+
+<div class="spectrum-wrap">
+  <div class="spectrum-bar"></div>
+</div>
+<div class="spectrum-labels">
+  <span>630nm</span>
+  <span>660nm</span>
+  <span>670nm</span>
+  <span>700–770nm ⚠</span>
+  <span>810nm</span>
+  <span>830nm</span>
+  <span>850nm</span>
+  <span>940nm</span>
+</div>
+
+<!-- RED LIGHT -->
+<div class="category">
+  <div class="category-title">🔴 Red Light — Visible (630–680nm) · Surface to dermis</div>
+  <div class="cards">
+
+    <div class="card nm630">
+      <div class="card-header">
+        <div class="nm-block"><span class="nm-badge">630</span><span class="nm-unit">nm</span></div>
+        <div class="card-titles">
+          <div class="card-label">Shallow Red</div>
+          <div class="card-sublabel">Entry-level skin treatment</div>
+        </div>
+      </div>
+      <div class="depth-row">
+        <span class="depth-label">Depth</span>
+        <div class="depth-bar-bg"><div class="depth-bar-fill"></div></div>
+        <span class="depth-value">1–3 mm</span>
+      </div>
+      <ul class="uses-list">
+        <li>Surface skin texture improvement</li>
+        <li>Mild inflammation reduction</li>
+        <li>Superficial wound healing</li>
+        <li>Acne (combined with blue 415nm)</li>
+        <li>Keratinocyte stimulation</li>
+      </ul>
+      <div class="evidence-row">
+        <span class="evidence-label">Evidence strength</span>
+        <div class="dots">
+          <div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card nm660">
+      <div class="card-header">
+        <div class="nm-block"><span class="nm-badge">660</span><span class="nm-unit">nm</span></div>
+        <div class="card-titles">
+          <div class="card-label">Deep Red <span class="star-badge">★ SKIN GOLD STANDARD</span></div>
+          <div class="card-sublabel">Most studied skin wavelength</div>
+        </div>
+      </div>
+      <div class="depth-row">
+        <span class="depth-label">Depth</span>
+        <div class="depth-bar-bg"><div class="depth-bar-fill"></div></div>
+        <span class="depth-value">3–5 mm</span>
+      </div>
+      <ul class="uses-list">
+        <li>Collagen & elastin synthesis</li>
+        <li>Wrinkle & fine line reduction</li>
+        <li>Wound healing & tissue repair</li>
+        <li>Pigmentation normalisation</li>
+        <li>Anti-inflammatory (skin level)</li>
+        <li>Scar & stretch mark fading</li>
+      </ul>
+      <div class="evidence-row">
+        <span class="evidence-label">Evidence strength</span>
+        <div class="dots">
+          <div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card nm670">
+      <div class="card-header">
+        <div class="nm-block"><span class="nm-badge">670</span><span class="nm-unit">nm</span></div>
+        <div class="card-titles">
+          <div class="card-label">Specialist Red</div>
+          <div class="card-sublabel">Eyes & brain — niche but strong data</div>
+        </div>
+      </div>
+      <div class="depth-row">
+        <span class="depth-label">Depth</span>
+        <div class="depth-bar-bg"><div class="depth-bar-fill"></div></div>
+        <span class="depth-value">4–6 mm</span>
+      </div>
+      <ul class="uses-list">
+        <li>Retinal health (macular degeneration)</li>
+        <li>Photoreceptor mitochondrial support</li>
+        <li>Vision improvement in ageing eyes</li>
+        <li>Transcranial photobiomodulation</li>
+        <li>Neuroprotection research</li>
+      </ul>
+      <div class="evidence-row">
+        <span class="evidence-label">Evidence strength</span>
+        <div class="dots">
+          <div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- DEAD ZONE -->
+<div class="dead-zone">
+  <div class="dead-zone-icon">⚠️</div>
+  <div class="dead-zone-text">
+    <strong>700–770nm — The Dead Zone.</strong> Wavelengths in this range have limited biochemical activity and minimal absorption by cytochrome c oxidase — the key mitochondrial enzyme that drives photobiomodulation. These wavelengths produce little to no therapeutic effect. Any device heavily marketing them should be treated with scepticism.
+  </div>
+</div>
+
+<!-- NIR -->
+<div class="category">
+  <div class="category-title">🟣 Near-Infrared (NIR) — Invisible (810–940nm) · Deep tissue</div>
+  <div class="cards">
+
+    <div class="card nm810">
+      <div class="card-header">
+        <div class="nm-block"><span class="nm-badge">810</span><span class="nm-unit">nm</span></div>
+        <div class="card-titles">
+          <div class="card-label">NIR — Brain & Nerve</div>
+          <div class="card-sublabel">Deep tissue, neurology focus</div>
+        </div>
+      </div>
+      <div class="depth-row">
+        <span class="depth-label">Depth</span>
+        <div class="depth-bar-bg"><div class="depth-bar-fill"></div></div>
+        <span class="depth-value">10–30 mm</span>
+      </div>
+      <ul class="uses-list">
+        <li>Transcranial brain stimulation (cognition)</li>
+        <li>Nerve repair & peripheral neuropathy</li>
+        <li>Deep muscle recovery (DOMS)</li>
+        <li>Thyroid support (neck application)</li>
+        <li>Neurological research (TBI, Parkinson's)</li>
+      </ul>
+      <div class="evidence-row">
+        <span class="evidence-label">Evidence strength</span>
+        <div class="dots">
+          <div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card nm830">
+      <div class="card-header">
+        <div class="nm-block"><span class="nm-badge">830</span><span class="nm-unit">nm</span></div>
+        <div class="card-titles">
+          <div class="card-label">NIR — Wound & Recovery</div>
+          <div class="card-sublabel">Post-surgical, tissue repair</div>
+        </div>
+      </div>
+      <div class="depth-row">
+        <span class="depth-label">Depth</span>
+        <div class="depth-bar-bg"><div class="depth-bar-fill"></div></div>
+        <span class="depth-value">10–25 mm</span>
+      </div>
+      <ul class="uses-list">
+        <li>Post-surgical wound healing</li>
+        <li>Deep tissue repair</li>
+        <li>Broader chromophore activation than 810nm</li>
+        <li>Radiation dermatitis (cancer therapy support)</li>
+        <li>Oral mucositis (chemo patients — in clinical guidelines)</li>
+      </ul>
+      <div class="evidence-row">
+        <span class="evidence-label">Evidence strength</span>
+        <div class="dots">
+          <div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card nm850">
+      <div class="card-header">
+        <div class="nm-block"><span class="nm-badge">850</span><span class="nm-unit">nm</span></div>
+        <div class="card-titles">
+          <div class="card-label">Deep NIR <span class="star-badge">★ NIR GOLD STANDARD</span></div>
+          <div class="card-sublabel">Deepest standard consumer wavelength</div>
+        </div>
+      </div>
+      <div class="depth-row">
+        <span class="depth-label">Depth</span>
+        <div class="depth-bar-bg"><div class="depth-bar-fill"></div></div>
+        <span class="depth-value">15–30 mm+</span>
+      </div>
+      <ul class="uses-list">
+        <li>Joint pain & arthritis management</li>
+        <li>Deep muscle recovery & performance</li>
+        <li>Systemic anti-inflammatory effects</li>
+        <li>Bone surface stimulation</li>
+        <li>Fibromyalgia & chronic pain</li>
+        <li>Hormonal & endocrine system support</li>
+      </ul>
+      <div class="evidence-row">
+        <span class="evidence-label">Evidence strength</span>
+        <div class="dots">
+          <div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card nm940">
+      <div class="card-header">
+        <div class="nm-block"><span class="nm-badge">940</span><span class="nm-unit">nm</span></div>
+        <div class="card-titles">
+          <div class="card-label">Deep NIR — Medical Grade</div>
+          <div class="card-sublabel">Clinical / specialist use</div>
+        </div>
+      </div>
+      <div class="depth-row">
+        <span class="depth-label">Depth</span>
+        <div class="depth-bar-bg"><div class="depth-bar-fill"></div></div>
+        <span class="depth-value">20–40 mm+</span>
+      </div>
+      <ul class="uses-list">
+        <li>Very deep tissue & organ-level treatment</li>
+        <li>Vascular healing & blood flow improvement</li>
+        <li>Lymphatic system stimulation</li>
+        <li>Bone healing in dense tissue</li>
+        <li>Professional & medical device settings</li>
+      </ul>
+      <div class="evidence-row">
+        <span class="evidence-label">Evidence strength</span>
+        <div class="dots">
+          <div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Quick reference table -->
+<div class="table-wrap">
+  <div class="table-title">⚡ Quick Reference — Goal to Wavelength</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Therapeutic Goal</th>
+        <th>Best Wavelength</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Skin anti-ageing / collagen</td>
+        <td><span class="wl-chip" style="color:#ff4444;background:rgba(255,68,68,0.1)">660nm</span></td>
+        <td>Gold standard — most clinical evidence</td>
+      </tr>
+      <tr>
+        <td>Acne / surface skin</td>
+        <td><span class="wl-chip" style="color:#ff7755;background:rgba(255,119,85,0.1)">630nm</span></td>
+        <td>Often paired with blue (415nm) for bacteria kill</td>
+      </tr>
+      <tr>
+        <td>Eye / retinal health</td>
+        <td><span class="wl-chip" style="color:#ff55bb;background:rgba(255,85,187,0.1)">670nm</span></td>
+        <td>64 studies — #1 wavelength for ocular applications</td>
+      </tr>
+      <tr>
+        <td>Brain / cognitive function</td>
+        <td><span class="wl-chip" style="color:#ff55bb;background:rgba(255,85,187,0.1)">670nm</span> + <span class="wl-chip" style="color:#aa88ff;background:rgba(170,136,255,0.1)">810nm</span></td>
+        <td>Transcranial PBM — emerging but strong data</td>
+      </tr>
+      <tr>
+        <td>Muscle recovery (DOMS)</td>
+        <td><span class="wl-chip" style="color:#aa88ff;background:rgba(170,136,255,0.1)">810nm</span> / <span class="wl-chip" style="color:#7755dd;background:rgba(119,85,221,0.1)">850nm</span></td>
+        <td>Either works; 850nm slightly deeper penetration</td>
+      </tr>
+      <tr>
+        <td>Joint pain / arthritis</td>
+        <td><span class="wl-chip" style="color:#7755dd;background:rgba(119,85,221,0.1)">850nm</span></td>
+        <td>Reaches joint capsule depth reliably</td>
+      </tr>
+      <tr>
+        <td>Post-surgical healing</td>
+        <td><span class="wl-chip" style="color:#8866ee;background:rgba(136,102,238,0.1)">830nm</span></td>
+        <td>Strongest wound-healing evidence in NIR band</td>
+      </tr>
+      <tr>
+        <td>Thyroid support</td>
+        <td><span class="wl-chip" style="color:#aa88ff;background:rgba(170,136,255,0.1)">810nm</span> / <span class="wl-chip" style="color:#7755dd;background:rgba(119,85,221,0.1)">850nm</span></td>
+        <td>Applied to neck — penetrates to thyroid gland</td>
+      </tr>
+      <tr>
+        <td>Fibromyalgia / chronic pain</td>
+        <td><span class="wl-chip" style="color:#7755dd;background:rgba(119,85,221,0.1)">850nm</span></td>
+        <td>FDA authorised for fibromyalgia pain relief</td>
+      </tr>
+      <tr>
+        <td>Hair loss / regrowth</td>
+        <td><span class="wl-chip" style="color:#ff4444;background:rgba(255,68,68,0.1)">660nm</span></td>
+        <td>Strong evidence; included in 2025 consensus review</td>
+      </tr>
+      <tr>
+        <td>Deep organ / vascular</td>
+        <td><span class="wl-chip" style="color:#5544bb;background:rgba(85,68,187,0.1)">940nm</span></td>
+        <td>Medical / clinical devices only</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Bottom recommendation -->
+<div class="bottom-note">
+  <strong>Best all-round device choice:</strong> Dual-wavelength <strong>660nm + 850nm</strong> — covers skin health and deep tissue in one panel, and is the most evidence-backed consumer combination available. For specialist use, add <strong>670nm</strong> (eyes/brain) or <strong>810nm</strong> (neurology/thyroid). The differences between 810nm, 830nm, and 850nm are subtle — any NIR wavelength in that range treats deep tissue effectively. Avoid devices marketing wavelengths in the 700–770nm dead zone.
+</div>
+
+</body>
+</html>
